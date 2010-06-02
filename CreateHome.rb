@@ -2,101 +2,151 @@
 #HomeDir v1.0 9.29.09 (JD Trout)
 #        v1.0f 10.18.09 (David Hasson)
 #        v1.0g 1.25.10 (JD Trout)
-#
+#        v2  6.1.10 (Terence Honles)
 #
 #
 #
 require 'rubygems'
+
 require 'net/ssh'
 require 'net/smtp'
+require 'yaml'
 
-$server = "ifs3ki.loni.ucla.edu"
-$email_svr = "smtp.loni.ucla.edu"
-$email_from = "sysadm@loni.ucla.edu"
-$email_to = "sysadm@loni.ucla.edu"
+# A helper library to create a user's home directory
+class CreateHome
+	# Config file should be sitting right next to this file
+	CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'CreateHome.yaml'))
 
-username = ARGV[0].to_s
-username.downcase
+	# Servers that this script will interact with
+	SERVERS = CONFIG[:servers]
+
+	# People to notify when this script makes changes
+	NOTIFY = CONFIG[:notify]
+
+	# Exit codes which this script will be using
+	EXITCODES = CONFIG[:exitcodes]
+
+	# Creates the home directory for the specified user
+	#
+	# @param username String specifying the username
+	def self.main(username)
+		if not username
+			puts 'No username specified'
+			exit EXITCODES[:missing_arguments]
+		end
+
+		begin
+			# try to create the user's home directory
+			CreateHome.new(username).create
+			puts "Home Directory for #{username} was created successfully."
+		rescue ArgumentError => e
+			puts e
+			exit EXITCODES[:invalid_username]
+		rescue SocketError, Net::SSH::AuthenticationFailed => e
+			puts 'Could not connect to server!'
+			exit EXITCODES[:server_failure]
+		rescue IndexError => e
+			puts e
+			exit EXITCODES[:invalid_username]
+		rescue NameError => e
+			puts e
+			exit EXITCODES[:directory_exists]
+		rescue RuntimeError => e
+			puts e
+			exit EXITCODES[:creation_error]
+		end
+	end
 
 
+	# Initializes a CreateHome instance
+	#
+	# @param username Username to use to create the directory
+	def initialize(username)
+		@username = username.downcase
+	end
 
-def errorf(text)
-  puts text
-  exit
-end
+	# Creates and sets up a user's home directory
+	def create
+		raise ArgumentError.new('Invalid username specified') if not valid_username?
 
-def email(username, homedir)
-  date = Time.now
-  msgstr = <<END_OF_MESSAGE
+		Timeout::timeout(30) do
+			Net::SSH.start(SERVERS[:ssh], 'root') do |ssh|
+
+				# search for user in NIS
+				passwd = ssh.exec!("/usr/bin/ypcat passwd | grep '^#{username}:'").split(':')
+
+				raise IndexError.new("Could not find user #{username}.") if passwd[0] != username
+
+				# pull out the group
+				group = passwd[3]
+				
+				# check for home directory existence
+				if ssh.exec!("test -d #{home} && echo exists") == "exists"
+					raise NameError.new("Home Directory #{home} already exists.")
+				end
+
+				# create home directory & add quota
+				ssh.exec!("cp -R /ifs/home/template #{home} && chown -R #{username}:#{group} #{home} && chmod -R 755 #{home} && isi quota create --directory --path=#{home} --hard-threshold=3G --advisory-threshold=2.75G")
+
+				# check for home directory existence
+				if ssh.exec!("test -d #{home} && echo exists") != "exists"
+					raise RuntimeError.new("Home Directory #{home} was not created.")
+				end
+			end
+		end
+
+		email
+	end
+
+
+	# Sends an email notifying a successful home directory creation
+	def email
+		date = Time.now
+
+		message = <<-msg
 From: LONI Systems Administration <sysadm@loni.ucla.edu>
 To: LONI Systems Administration <sysadm@loni.ucla.edu>
 Subject: [loni-sys] The home directory created for <#{username}>.
 
    The home directory for <#{username}> has been created in 
-    #{homedir} on #{date}. \n
+    #{home} on #{date}. \n
     Cheers, 
     LONI Administration
-END_OF_MESSAGE
+		msg
 
-  Net::SMTP.start("#{$email_svr}", 25) do |smtp|
-    smtp.send_message msgstr, "#{$email_from}", "#{$email_to}"
-  end
-end
+		Net::SMTP.start(SERVERS[:email], 25) do |smtp|
+			smtp.send_message message, NOTIFY[:from], NOTIFY[:to]
+		end
+	end
 
-def c_hdir(username)
-  begin
-    Timeout::timeout(30) do
-      
-      ssh = Net::SSH.start($server, 'root')
+	private :email
 
-      tmp = ssh.exec!("/usr/bin/ypcat passwd")
-      passwd = []
-      passwd = tmp.to_s.split("\n")
+	# Returns the path to a user's home directory
+	def home
+		"/ifs/home/#{username}"
+	end
 
-      #Search for userer in NIS
-      tmp_user = []
-      
-      passwd.each do |string|
-        separated = string.split(":")
-        if separated.first == username
-          tmp_user = string.split(":")
-          break
-        end
-      end
-      
-      errorf("Could not find user #{username}.") unless tmp_user[0] == username
+	attr_reader :username
 
+	# Sets a username for home directory creation
+	def username=(username)
+		@username = username
+		@valid_username = nil
+	end
 
-      # Define home dir and group
-      homedir = "/ifs/home/#{username}"
-      group = tmp_user[3]
-      
+	# Checks to see if the username is valid username string
+	def valid_username?
+		if @valid_username == nil
+			@valid_username = !(@username =~ /[^a-zA-Z_]/)
+		end
 
-      #Check for home dir existance
-      hd_check = ssh.exec!("ls /ifs/home | grep -w #{username}")
-      hd_check = hd_check.chomp unless hd_check == nil
-      
-      errorf("Home Directory #{homedir} already exists.") if hd_check == username
-
-      #Create home dir & add quoate
-      ssh.exec!("cp -R /ifs/home/template #{homedir} && chown -R #{username}:#{group} #{homedir} && chmod -R 755 #{homedir} && isi quota create --directory --path=#{homedir} --hard-threshold=3G --advisory-threshold=2.75G")
-
-      #Check to see if home dir was created
-      hd_done = ssh.exec!("ls /ifs/home | grep -w #{username}")
-      hd_done = hd_done.chomp unless hd_done == nil
-      if hd_done == username
-        puts "Home Directory for #{username} was created successfully."
-        email(username, homedir)
-      end
-      errorf("Home Directory #{homedir} was not created.") if hd_done == nil
-    end
-  end
+		return @valid_username
+	end
 end
 
 
 
-# Run Program
-errorf("Invalid username specified") if username =~ /[^a-zA-Z_]/
-
-c_hdir(username)
-
+# If we're running this as a script
+if __FILE__ == $0
+	CreateHome.main ARGV[0]
+end
