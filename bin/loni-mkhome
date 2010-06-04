@@ -4,4 +4,4 @@ require File.join(File.dirname(__FILE__), '../lib/CreateHome')
 
 # Just a wrapper function because gems aren't nice (__FILE__ == $0 does not
 # succeed)
-CreateHome.main ARGV[0]
+CreateHome.main
