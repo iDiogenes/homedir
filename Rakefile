@@ -8,7 +8,7 @@ require 'rake/testtask'
 
 spec = Gem::Specification.new do |s|
 	s.name = 'loni-mkhome'
-	s.version = '2.0.0'
+	s.version = '2.1.0'
 	s.author = 'Terence Honles'
 	s.email = 'terence@honles.com'
 	s.homepage = 'http://gibson-dev.loni.ucla.edu/ruby-scripts/create-home-directory'

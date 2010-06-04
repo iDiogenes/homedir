@@ -1,11 +1,5 @@
 #!/usr/bin/env ruby
-#HomeDir v1.0 9.29.09 (JD Trout)
-#        v1.0f 10.18.09 (David Hasson)
-#        v1.0g 1.25.10 (JD Trout)
-#        v2  6.1.10 (Terence Honles)
-#
-#
-#
+
 require 'rubygems'
 
 require 'etc'
@@ -81,10 +75,15 @@ class CreateHome
 		options = OpenStruct.new
 
 		parser = OptionParser.new do |p|
-			p.banner = "Usage #{$0} [options] username"
+			p.banner = "Usage #{$0} [options] username [username] ..."
 			p.on('-c', '--comment COMMENT',
 					'Add comment to email message') do |comment|
 				options.comment = comment
+			end
+
+			p.on('-h', '--help', 'Show this') do |h|
+				puts p
+				exit
 			end
 		end
 
