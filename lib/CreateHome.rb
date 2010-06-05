@@ -37,7 +37,14 @@ class CreateHome
 		end
 
 		errors = []
-		ssh_open
+
+		begin
+			ssh_open
+		rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
+			# FATAL ERROR
+			$stderr.puts 'Could not connect to server!'
+			exit EXITCODES[:server_failure]
+		end
 
 		usernames.uniq.each do |username|
 			begin
@@ -46,7 +53,7 @@ class CreateHome
 				puts "Home Directory for #{username} was created successfully."
 			rescue ArgumentError => e
 				errors << {:string => "#{e}: #{username}", :code => EXITCODES[:invalid_username]}
-			rescue SocketError, Net::SSH::AuthenticationFailed => e
+			rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
 				# FATAL ERROR
 				$stderr.puts 'Could not connect to server!'
 				exit EXITCODES[:server_failure]
@@ -92,10 +99,25 @@ class CreateHome
 		return options, args, parser
 	end
 
+
+	# opens an SSH connection if needed
+	def self.smtp_open
+		@smtp ||= Net::SMTP.start(SERVERS[:email], 25)
+	end
+
+
+	# closes an SSH connection if open
+	def self.smtp_close
+		@smtp.close if @smtp
+		@smtp = nil
+	end
+
+
 	# opens an SSH connection if needed
 	def self.ssh_open
 		@ssh ||= Net::SSH.start(SERVERS[:ssh], 'root')
 	end
+
 
 	# closes an SSH connection if open
 	def self.ssh_close
@@ -143,6 +165,7 @@ class CreateHome
 		end
 
 		email(comment)
+		CreateHome.smtp_close if close
 	end
 
 
@@ -175,9 +198,7 @@ Subject: [loni-sys] The home directory created for <#{username}>.
     LONI Administration
 		msg
 
-		Net::SMTP.start(SERVERS[:email], 25) do |smtp|
-			smtp.send_message message, NOTIFY[:from], NOTIFY[:to]
-		end
+		CreateHome.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
 	end
 
 	private :email
