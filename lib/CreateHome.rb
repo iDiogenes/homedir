@@ -156,6 +156,9 @@ class CreateHome
 			# create home directory & add quota
 			ssh.exec!("cp -R /ifs/home/template #{home} && chown -R #{username}:#{group} #{home} && chmod -R 755 #{home} && isi quota create --directory --path=#{home} --hard-threshold=3G --advisory-threshold=2.75G")
 
+			# set up pidgin
+			ssh.exec!("sed -i 's/LONI_ACCOUNT_NAME/#{username}/' #{home}/.purple/accounts.xml")
+
 			# check for home directory existence
 			if ssh.exec!("test -d #{home} && echo exists") != "exists"
 				raise RuntimeError.new("Home Directory #{home} was not created.")
