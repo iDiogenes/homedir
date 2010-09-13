@@ -39,20 +39,27 @@ opts.separator ""
 
    usernames = []
 
-   ARGV.uniq.each do |username|
+   #uname = opts.parse!(args)
+   #puts "my name is #{uname}"
+   ARGV.uniq.each do |username| 
     username.to_s.downcase
+    return "modify", usernames if username =~ /\-/
     usernames << username
+    
 #    puts username
    end
-   usernames.each do |die|
-     puts die
-   end
-  return "modify", usernames
+
+   #usernames.each do |die|
+     
+     #puts die
+     
+   #end
+  #return "modify", usernames
   
 
   }
-opts.separator ""
 
+    
   opts.on('-s', '--size', 'Set directory quota size') {
     qs = ARGV[0]
     unless qs =~ (/^(\d*\.?\d)[GTM]$/) #Make sure
@@ -64,7 +71,7 @@ opts.separator ""
     
   }
 
-    opts.separator ""
+    
 
   opts.on('-h', '--help', 'Show this message') do 
     puts opts
@@ -78,12 +85,13 @@ end
 
 
 def run
-  #view = []
+  view = []
   view = parse_arguments(ARGV)
+  #puts "quota size is"
   #puts @quotasize
-#  view.each do |death|
-#    puts death
-#  end
+  view.each do |death|
+    puts death
+  end
   
 end
 
