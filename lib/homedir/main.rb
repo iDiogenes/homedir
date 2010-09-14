@@ -16,7 +16,16 @@ module HomeDir
         #Error Connecting to server
         $stderr.puts 'Could not connect to server!' # Need to add some proper errors
       end
-
+      
+      Directory.new(@ssh)
+      
+      if @usernames[0] == "create"
+        Directory.create(@quotasize, @usernames)
+      end
+      
+      if @usernames[0] == "modify"
+        Directory.modify(@quotasize, @usernames)
+      end
       
 
     end

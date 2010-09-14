@@ -16,47 +16,30 @@ opts = OptionParser.new do |opts|
   opts.separator ''
 
   opts.on('-c', '--create', 'Create home directory') {
-   if ARGV[0] == nil
-     $stderr.puts 'No usernames specified!'
-   end
+    if ARGV[0] == nil
+      $stderr.puts 'No usernames specified!'
+    end
 
-   usernames = []
-   
-   ARGV.uniq.each do |username|
-    username.to_s.downcase
-    usernames << username
-   end
-
-  return "create", usernames
-  #return  usernames
-
+    @usernames = ["create"]
+    ARGV.uniq.each do |username| 
+     username = username.to_s.downcase
+     break if username =~ /\-/
+     @usernames << username
+    end
   }
-opts.separator ""
+  
+
   opts.on('-m', '--modify', 'Modify home directory quota') {
    if ARGV[0] == nil
      $stderr.puts 'No usernames specified!'
    end
 
-   usernames = []
-
-   #uname = opts.parse!(args)
-   #puts "my name is #{uname}"
+   @usernames = ["modify"]
    ARGV.uniq.each do |username| 
-    username.to_s.downcase
-    return "modify", usernames if username =~ /\-/
-    usernames << username
-    
-#    puts username
+    username = username.to_s.downcase
+    break if username =~ /\-/
+    @usernames << username
    end
-
-   #usernames.each do |die|
-     
-     #puts die
-     
-   #end
-  #return "modify", usernames
-  
-
   }
 
     
@@ -71,7 +54,6 @@ opts.separator ""
     
   }
 
-    
 
   opts.on('-h', '--help', 'Show this message') do 
     puts opts
@@ -83,16 +65,17 @@ opts.parse!(args)
 end
 
 
-
 def run
-  view = []
   view = parse_arguments(ARGV)
-  #puts "quota size is"
-  #puts @quotasize
-  view.each do |death|
-    puts death
-  end
+  #puts "quota size is #{@quotasize}"
   
+  if @usernames[0] == "modify"
+    puts @usernames
+  end
+  if @usernames[0] == "create"
+    puts @usernames
+  end
+
 end
 
 run
