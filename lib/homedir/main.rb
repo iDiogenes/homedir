@@ -1,23 +1,22 @@
 module HomeDir
   class Main
 
-    def initialize
-      @quotasize  = nil
-    end
+#    def initialize
+#      @quotasize  = nil
+#      @usernames  = nil
+#    end
 
     def run(args)
-      
       parse_arguments(ARGV)
 #      Need to put in some code to deal with parsing errors
 
       begin
-        ssh_open
+        ssh ||= ssh_open
       rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
         #Error Connecting to server
         $stderr.puts 'Could not connect to server!' # Need to add some proper errors
-      end
       
-      Directory.new(@ssh)
+      Directory.new(ssh)
       
       if @usernames[0] == "create"
         Directory.create(@quotasize, @usernames)
@@ -26,8 +25,10 @@ module HomeDir
       if @usernames[0] == "modify"
         Directory.modify(@quotasize, @usernames)
       end
-      
 
+      ssh_close(ssh) #Clean up ssh connections
+      
+      end
     end
 
     private
@@ -46,15 +47,14 @@ module HomeDir
             $stderr.puts 'No usernames specified!' #This should not be handled here
           end
 
-          usernames = []
+          @usernames = ["create"]
 
           ARGV.uniq.each do |username|
-            username.to_s.downcase
-            usernames << username
+            username = username.to_s.downcase
+            break if username =~ /\-/
+            @usernames << username
           end
-
-          return 'create', usernames
-
+          
         }
 
         opts.on('-m', '--modify', 'Modify home directory quota') {
@@ -63,20 +63,19 @@ module HomeDir
             $stderr.puts 'No usernames specified!' #This should not be handled here
           end
 
-          usernames = []
+          @usernames = ["modify"]
 
           ARGV.uniq.each do |username|
-            username.to_s.downcase
-            puts "Creating #{username}"   #This is just a place holder
+            username = username.to_s.downcase
+            break if username =~ /\-/
+            @usernames << username
           end
-
-          return 'modify', usernames
           
         }
 
         opts.on('-s', '--size', 'Set directory quota size') {
           qs = ARGV[0]
-          unless qs =~ (/^(\d*\.?\d)[GTM]$/) #Make sure
+          unless qs =~ (/^(\d*\.?\d)[GTM]$/) #Make sure the formatting is correct
             $stderr.puts "Incorrect size value" # Need to put in a proper exit code
           end
 
@@ -88,18 +87,19 @@ module HomeDir
           exit 1
         end
      end
+     
      opts.parse!(args)
     end
 
     # Open SSH connection
     def ssh_open
-      @ssh ||= Net::SSH.start(SERVERS[:ssh], 'root')
+      Net::SSH.start(SERVERS[:ssh], 'root')
     end
 
     # Close SSH connection if open
-    def ssh_close
-      @ssh.close if ssh
-      @ssh = nil
+    def ssh_close(ssh)
+      ssh.close if ssh
+      ssh = nil
     end
     
   end

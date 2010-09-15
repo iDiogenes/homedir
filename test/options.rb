@@ -2,9 +2,11 @@
 
 require 'rubygems'
 require 'optparse'
+require 'net/ssh'
 
 #def initialize
 #  @quotasize  = nil
+#  @ssh        = nil
 #end
 
 def parse_arguments(args)
@@ -67,15 +69,98 @@ end
 
 def run
   view = parse_arguments(ARGV)
-  #puts "quota size is #{@quotasize}"
-  
-  if @usernames[0] == "modify"
-    puts @usernames
-  end
-  if @usernames[0] == "create"
-    puts @usernames
+
+  ssh ||= ssh_open
+
+  directory_mod(ssh, @usernames,@quotasize)
+
+
+end
+
+def ssh_open
+   Net::SSH.start('localhost', 'jtrout', :password => "passwd")
+end
+
+
+def directory(ssh,username,quotasize)
+
+
+  username.delete("create")
+  username.uniq.each do |username|
+    passwd = ssh.exec!("cat /etc/passwd | grep '^#{username}:'").split(':') #If username does not exists split error capture error
+    
+    #$stderr.puts "Could not find user #{username}." if passwd[0] != username
+
+    group = passwd[3]
+    home = passwd[5]
+
+
+     hd_check = ssh.exec!("/usr/bin/test -d #{home} && echo exists")
+     $stderr.puts "Home dir #{home} already exists" if hd_check.chomp == "exists"
+
+    storage = @quotasize.slice(/[GMT]/)
+    quota_thres = sprintf('%0.2f',(@quotasize.to_f/((1+0.10))))
+    quota_thres =  quota_thres << storage
+   
+    puts quota_thres
+
+
+
+
+#    if ssh.exec!("/usr/bin/test -d /home/jtrout && echo exists") == "exists"
+#			puts "Home Directory #{home} already exists."
+#		end
+    
   end
 
+
+  #end
+end
+
+def directory_mod(ssh,username,quotasize)
+  username.delete("modify")
+
+  if username.index "all" or "a"
+    
+    passwd = ssh.exec!("cat /etc/passwd").split("\n")
+    #passwd = passwd.split(':')
+    #puts  passwd[1]
+    passwd.each do |passwd|
+      passwd = passwd.split(':')
+
+      home = passwd[5]
+      puts home
+
+    end
+    #puts passwd[0]
+  end
+#  username.uniq.each do |username|
+#    passwd = ssh.exec!("cat /etc/passwd | grep '^#{username}:'").split(':') #If username does not exists split error capture error
+#
+#    #$stderr.puts "Could not find user #{username}." if passwd[0] != username
+#
+#    group = passwd[3]
+#    home = passwd[5]
+#
+#
+#     hd_check = ssh.exec!("/usr/bin/test -d #{home} && echo exists")
+#     $stderr.puts "Home dir #{home} already exists" if hd_check.chomp == "exists"
+#
+#    storage = @quotasize.slice(/[GMT]/)
+#    quota_thres = sprintf('%0.2f',(@quotasize.to_f/((1+0.10))))
+#    quota_thres =  quota_thres << storage
+#
+#    puts quota_thres
+
+
+#    if ssh.exec!("/usr/bin/test -d /home/jtrout && echo exists") == "exists"
+#			puts "Home Directory #{home} already exists."
+#		end
+
+  #end
+
+
+  #end
 end
 
 run
