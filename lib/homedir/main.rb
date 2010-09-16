@@ -1,19 +1,5 @@
 module HomeDir
   class Main
-    # Config file should be sitting right next to this file
-  	CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'CreateHome.yaml'))
-
-  	# Servers that this script will interact with
-  	SERVERS = CONFIG[:servers]
-  	
-  	# Username that will be used to make connections
-  	USER = CONFIG[:username]
-
-  	# People to notify when this script makes changes
-  	NOTIFY = CONFIG[:notify]
-
-  	# Exit codes which this script will be using
-  	EXITCODES = CONFIG[:exitcodes]
 
 #    def initialize
 #      @quotasize  = nil
@@ -23,12 +9,9 @@ module HomeDir
     def run(args)
       parse_arguments(ARGV)
 #      Need to put in some code to deal with parsing errors
-
-      # Open connection to SSH server
-      Connection.new(SERVERS[:ssh], USER[:username])
-      ssh ||= Connection.ssh_start
       
-      Directory.new(ssh)
+      # Create directory object
+      Directory.new
       
       if @usernames[0] == "create"
         Directory.create(@quotasize, @usernames)
@@ -37,10 +20,7 @@ module HomeDir
       if @usernames[0] == "modify"
         Directory.modify(@quotasize, @usernames)
       end
-
-      ssh_close(ssh) #Clean up ssh connections
       
-      end
     end
 
     private
@@ -105,6 +85,7 @@ module HomeDir
 
     # Open SSH connection
     def ssh_open
+
       Net::SSH.start(SERVERS[:ssh], 'root')
     end
 

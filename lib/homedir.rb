@@ -7,7 +7,23 @@ require 'ostruct'
 require 'yaml'
 
 require File.expand_path(File.dirname(__FILE__) + '/homedir/connection')
+require File.expand_path(File.dirname(__FILE__) + '/homedir/directory')
+require File.expand_path(File.dirname(__FILE__) + '/homedir/email')
+require File.expand_path(File.dirname(__FILE__) + '/homedir/mail')
 
 module HomeDir
-    
+  # Config file should be sitting right next to this file
+  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'CreateHome.yaml'))
+
+  # Servers that this script will interact with
+  SERVERS = CONFIG[:servers]
+
+  # Username that will be used to make connections
+  USER = CONFIG[:username]
+
+  # People to notify when this script makes changes
+  NOTIFY = CONFIG[:notify]
+
+  # Exit codes which this script will be using
+  EXITCODES = CONFIG[:exitcodes]
 end
