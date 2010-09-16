@@ -1,11 +1,5 @@
 module HomeDir
   class Directory
-#    attr_accessor :server, :user
-#
-#    def initialize(server, user)
-#      @server = server
-#      @user = user
-#    end
 
     def create(quotasize,usernames)
       ssh = Connection.new

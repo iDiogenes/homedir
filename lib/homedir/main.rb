@@ -1,10 +1,6 @@
 module HomeDir
   class Main
 
-#    def initialize
-#      @quotasize  = nil
-#      @usernames  = nil
-#    end
 
     def run(args)
       parse_arguments(ARGV)
@@ -81,20 +77,7 @@ module HomeDir
      end
      
      opts.parse!(args)
-    end
-
-    # Open SSH connection
-    def ssh_open
-
-      Net::SSH.start(SERVERS[:ssh], 'root')
-    end
-
-    # Close SSH connection if open
-    def ssh_close(ssh)
-      ssh.close if ssh
-      ssh = nil
-    end
-    
+    end    
   end
 end
 

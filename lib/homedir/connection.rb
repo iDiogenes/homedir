@@ -14,8 +14,8 @@ module HomeDir
       return ssh
     end
 
-    def ssh_stop
-      ssh_close if ssh
+    def ssh_stop(ssh)
+      ssh_close(ssh) if ssh
     end
 
     private

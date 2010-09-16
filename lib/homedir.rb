@@ -13,7 +13,7 @@ require File.expand_path(File.dirname(__FILE__) + '/homedir/mail')
 
 module HomeDir
   # Config file should be sitting right next to this file
-  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'CreateHome.yaml'))
+  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'HomeDirConf.yaml'))
 
   # Servers that this script will interact with
   SERVERS = CONFIG[:servers]

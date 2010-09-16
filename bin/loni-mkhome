@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), '../lib/CreateHome')
+require File.join(File.dirname(__FILE__), '../lib/homdedir')
 
-# Just a wrapper function because gems aren't nice (__FILE__ == $0 does not
-# succeed)
-CreateHome.main
+# Run the program
+

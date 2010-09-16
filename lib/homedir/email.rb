@@ -35,7 +35,7 @@ module HomeDir
       LONI Administration
       msg
 
-      CreateHome.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
+      Email.smtp_open.send_message message, ::HomeDir::NOTIFY[:from], ::HomeDir::NOTIFY[:to]
     end
 
     private
