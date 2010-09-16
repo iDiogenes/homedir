@@ -1,6 +1,6 @@
 --- 
 :servers: 
-  :ssh: ifsnl.loni.ucla.edu
+  :ssh: ifs.loni.ucla.edu
   :email: smtp.loni.ucla.edu
 :notify:
   :from: sysadm@loni.ucla.edu

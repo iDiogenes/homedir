@@ -1,5 +1,19 @@
 module HomeDir
   class Main
+    # Config file should be sitting right next to this file
+  	CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'CreateHome.yaml'))
+
+  	# Servers that this script will interact with
+  	SERVERS = CONFIG[:servers]
+  	
+  	# Username that will be used to make connections
+  	USER = CONFIG[:username]
+
+  	# People to notify when this script makes changes
+  	NOTIFY = CONFIG[:notify]
+
+  	# Exit codes which this script will be using
+  	EXITCODES = CONFIG[:exitcodes]
 
 #    def initialize
 #      @quotasize  = nil
@@ -10,11 +24,9 @@ module HomeDir
       parse_arguments(ARGV)
 #      Need to put in some code to deal with parsing errors
 
-      begin
-        ssh ||= ssh_open
-      rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
-        #Error Connecting to server
-        $stderr.puts 'Could not connect to server!' # Need to add some proper errors
+      # Open connection to SSH server
+      Connection.new(SERVERS[:ssh], USER[:username])
+      ssh ||= Connection.ssh_start
       
       Directory.new(ssh)
       
