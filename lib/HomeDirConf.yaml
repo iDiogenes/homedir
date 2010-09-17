@@ -1,0 +1,16 @@
+--- 
+:servers: 
+  :ssh: ifs.loni.ucla.edu
+  :email: smtp.loni.ucla.edu
+:notify:
+  :from: sysadm@loni.ucla.edu
+  :to: sysadm@loni.ucla.edu
+:user:
+  :username: root
+:exitcodes:
+  :success: 0
+  :missing_arguments: 1
+  :server_failure: 2
+  :invalid_username: 4
+  :directory_exists: 8
+  :creation_error: 16
