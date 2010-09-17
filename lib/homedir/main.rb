@@ -1,9 +1,7 @@
 module HomeDir
   class Main
 
-
-
-    def self.run(args)
+    def run(args)
       parse_arguments(args)
 #      Need to put in some code to deal with parsing errors
       puts "just passed the parse"

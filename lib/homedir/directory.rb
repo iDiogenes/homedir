@@ -43,7 +43,7 @@ module HomeDir
       ssh = ssh.ssh_start
       usernames.delete("modify")
 
-      if usernames.index "all" or "a"
+      if usernames.index "all"
         passwd = ssh.exec!("/usr/bin/ypcat passwd").split("\n")
         passwd.each do |passwd|
           passwd = passwd.split(':')
@@ -56,7 +56,7 @@ module HomeDir
            ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
         end
 
-      elsif usernames.index "blank" or "b"
+      elsif usernames.index "blank"
         #Add code to deal with isi quota ls in --path=/home/ifs
 
       else

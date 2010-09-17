@@ -3,6 +3,8 @@ module HomeDir
       
     # Start SSH session
     def ssh_start
+      server = HomeDir::Servers[:ssh]
+      puts server
       begin
         ssh = ssh_open
       rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
@@ -21,6 +23,7 @@ module HomeDir
     private
     	# Opens an SSH connection if needed
     def ssh_open
+
       ssh ||= Net::SSH.start(HomeDir::Servers[:ssh], HomeDir::user[:username])
     end
 

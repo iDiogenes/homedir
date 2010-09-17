@@ -4,6 +4,6 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
 require 'homedir'
 
-puts "about to run main.run"
+
 # Run the program
-#HomeDir::Main.run(ARGV)
+HomeDir::Main.new.run(ARGV)

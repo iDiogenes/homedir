@@ -7,14 +7,15 @@ require 'ostruct'
 require 'yaml'
 
 
-require 'homedir/connection'
-require 'homedir/directory'
-require 'homedir/email'
-require 'homedir/main'
+
+require File.expand_path(File.dirname(__FILE__) + '/homedir/connection')
+require File.expand_path(File.dirname(__FILE__) + '/homedir/directory')
+require File.expand_path(File.dirname(__FILE__) + '/homedir/email')
+require File.expand_path(File.dirname(__FILE__) + '/homedir/main')
 
 module HomeDir
   # Config file should be sitting right next to this file
-  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'config.yaml'))
+  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'HomeDirConf.yaml'))
 
   # Servers that this script will interact with
   SERVERS = CONFIG[:servers]
