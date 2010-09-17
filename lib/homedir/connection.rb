@@ -9,7 +9,7 @@ module HomeDir
         # Notify isser if Auth or timeout. use raise none of this should be in here.  Should have several tries.
         # FATAL ERROR
         $stderr.puts 'Could not connect to server!'
-        exit ::HomeDir::EXITCODES[:server_failure]
+        exit HomeDir::EXITCODES[:server_failure]
       end
       return ssh
     end
@@ -21,7 +21,7 @@ module HomeDir
     private
     	# Opens an SSH connection if needed
     def ssh_open
-      ssh ||= Net::SSH.start(::HomeDir::Servers[:ssh], ::HomeDir::user[:username])
+      ssh ||= Net::SSH.start(HomeDir::Servers[:ssh], HomeDir::user[:username])
     end
 
     # Closes an SSH connection if open

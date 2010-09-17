@@ -2,19 +2,20 @@ module HomeDir
   class Main
 
 
-    def run(args)
-      parse_arguments(ARGV)
+
+    def self.run(args)
+      parse_arguments(args)
 #      Need to put in some code to deal with parsing errors
-      
+      puts "just passed the parse"
       # Create directory object
-      Directory.new
+      #Directory.new
       
       if @usernames[0] == "create"
-        Directory.create(@quotasize, @usernames)
+        Directory.new.create(@quotasize, @usernames)
       end
       
       if @usernames[0] == "modify"
-        Directory.modify(@quotasize, @usernames)
+        Directory.new.modify(@quotasize, @usernames)
       end
       
     end

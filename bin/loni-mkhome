@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), '../lib/homdedir')
+require File.join(File.dirname(__FILE__), '../lib/homedir')
 
+puts "about to run main.run"
 # Run the program
-
+#HomeDir::Main.run(ARGV)

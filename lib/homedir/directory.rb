@@ -38,6 +38,7 @@ module HomeDir
     end
 
     def modify(quotasize,usernames)
+      puts "About to open a connection"
       ssh = Connection.new
       ssh = ssh.ssh_start
       usernames.delete("modify")
@@ -66,7 +67,9 @@ module HomeDir
           home = passwd[5]
 
           # set the quota threshold
-          quota_thres =  quota_threshold(quotasize)
+          
+          #quota_thres =  quota_threshold(quotasize)
+          quota_thres =  "3G"
 
           ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
         end
@@ -78,6 +81,8 @@ module HomeDir
     def quota_threshold(qs)
       storage = qs.slice(/[GMT]/)
       qs = sprintf('%0.2f',(qs.to_f/((1+0.10))))
+      puts qs
+      #qs = qs.to_s
       qs = quota_thres << storage
 
       return qs

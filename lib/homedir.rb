@@ -6,10 +6,11 @@ require 'optparse'
 require 'ostruct'
 require 'yaml'
 
-require File.expand_path(File.dirname(__FILE__) + '/homedir/connection')
-require File.expand_path(File.dirname(__FILE__) + '/homedir/directory')
-require File.expand_path(File.dirname(__FILE__) + '/homedir/email')
-require File.expand_path(File.dirname(__FILE__) + '/homedir/mail')
+
+require 'homedir/connection'
+require 'homedir/homedir/directory'
+require 'homedir/homedir/email'
+require 'homedir/homedir/mail'
 
 module HomeDir
   # Config file should be sitting right next to this file
