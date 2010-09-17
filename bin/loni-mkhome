@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), '../lib/homedir')
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+
+require 'homedir'
 
 puts "about to run main.run"
 # Run the program

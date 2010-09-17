@@ -8,13 +8,13 @@ require 'yaml'
 
 
 require 'homedir/connection'
-require 'homedir/homedir/directory'
-require 'homedir/homedir/email'
-require 'homedir/homedir/mail'
+require 'homedir/directory'
+require 'homedir/email'
+require 'homedir/main'
 
 module HomeDir
   # Config file should be sitting right next to this file
-  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'HomeDirConf.yaml'))
+  CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'config.yaml'))
 
   # Servers that this script will interact with
   SERVERS = CONFIG[:servers]
