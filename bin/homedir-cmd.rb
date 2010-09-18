@@ -6,4 +6,4 @@ require 'homedir'
 
 
 # Run the program
-HomeDir::Main.new.run(ARGV)
+HomeDir::Parse.new.run(ARGV)
