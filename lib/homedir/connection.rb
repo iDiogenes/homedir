@@ -3,17 +3,15 @@ module HomeDir
       
     # Start SSH session
     def ssh_start
-      server = HomeDir::Servers[:ssh]
-      puts server
-      begin
-        ssh = ssh_open
-      rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
+
+      #begin
+       ssh = ssh_open 
+      #rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
         # Notify isser if Auth or timeout. use raise none of this should be in here.  Should have several tries.
         # FATAL ERROR
-        $stderr.puts 'Could not connect to server!'
-        exit HomeDir::EXITCODES[:server_failure]
-      end
-      return ssh
+        #$stderr.puts 'Could not connect to server!'
+        #exit HomeDir::EXITCODES[:server_failure]
+      #end
     end
 
     def ssh_stop(ssh)
@@ -21,17 +19,17 @@ module HomeDir
     end
 
     private
+    
     	# Opens an SSH connection if needed
     def ssh_open
-
-      ssh ||= Net::SSH.start(HomeDir::Servers[:ssh], HomeDir::user[:username])
+      Net::SSH.start(SERVERS[:ssh], USER[:name])
     end
 
     # Closes an SSH connection if open
     def ssh_close(ssh)
-      ssh.close 
+      ssh.close
+      puts "SSH Connection closed" if ssh.closed? 
       ssh = nil
     end
-
   end
 end

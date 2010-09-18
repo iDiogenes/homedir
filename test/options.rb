@@ -70,17 +70,41 @@ end
 def run
   view = parse_arguments(ARGV)
 
-  ssh ||= ssh_open
+  ssh ||= ssh_start
 
   directory_mod(ssh, @usernames,@quotasize)
 
+  ssh_close(ssh)
 
 end
 
 def ssh_open
-   Net::SSH.start('localhost', 'jtrout', :password => "passwd")
+   Net::SSH.start('localhost', 'jdtrout')
 end
 
+def ssh_start
+  #server = HomeDir::SERVERS[:ssh]
+  #puts server
+  begin
+    ssh = ssh_open
+  rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
+    # Notify isser if Auth or timeout. use raise none of this should be in here.  Should have several tries.
+    # FATAL ERROR
+    $stderr.puts 'Could not connect to server!'
+    exit HomeDir::EXITCODES[:server_failure]
+  end
+  return ssh
+end
+
+def ssh_close(ssh)
+  #Net::SSH::Connection::Session.close(ssh)
+  ssh.close 
+  #ssh = nil
+end
+
+def ssh_stop(ssh)
+  ssh_close(ssh) if ssh
+end
 
 def directory(ssh,username,quotasize)
 

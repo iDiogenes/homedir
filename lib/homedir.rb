@@ -19,10 +19,9 @@ module HomeDir
 
   # Servers that this script will interact with
   SERVERS = CONFIG[:servers]
-
+  
   # Username that will be used to make connections
-  USER = CONFIG[:username]
-
+  USER = CONFIG[:user]
   # People to notify when this script makes changes
   NOTIFY = CONFIG[:notify]
 

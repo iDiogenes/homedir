@@ -14,7 +14,7 @@ module HomeDir
 
         # pull out the group & home directory
         group = passwd[3]
-        home = passwd[5]
+        home = "/ifs/home/#{passwd[0]}"
 
         # check for home directory existence
         hd_check = ssh.exec!("/usr/bin/test -d #{home} && echo exists")
@@ -48,43 +48,34 @@ module HomeDir
         passwd.each do |passwd|
           passwd = passwd.split(':')
 
-          home = passwd[5]
+          home = "/ifs/home/#{passwd[0]}"
 
           # set the quota threshold 
           quota_thres =  quota_threshold(quotasize)
 
            ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
         end
-
-      elsif usernames.index "blank"
-        #Add code to deal with isi quota ls in --path=/home/ifs
-
       else
         usernames.uniq.each do |username|
         passwd = ssh.exec!("/usr/bin/ypcat passwd | grep '^#{username}:'").split(':')
 
           # pull out the home directory
-          home = passwd[5]
+          home = "/ifs/home/#{passwd[0]}"
 
           # set the quota threshold
-          
-          #quota_thres =  quota_threshold(quotasize)
-          quota_thres =  "3G"
+          quota_thres =  quota_threshold(quotasize)
 
           ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
         end
       end
-     ssh.ssh_stop(ssh)
+     ssh = Connection.new.ssh_stop(ssh)
     end
 
     # Method for setting the isi quota threshold - curretly set to be 10% less than the quota size
     def quota_threshold(qs)
       storage = qs.slice(/[GMT]/)
       qs = sprintf('%0.2f',(qs.to_f/((1+0.10))))
-      puts qs
-      #qs = qs.to_s
-      qs = quota_thres << storage
-
+      qs = qs << storage
       return qs
     end
   end

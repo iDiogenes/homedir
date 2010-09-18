@@ -4,9 +4,6 @@ module HomeDir
     def run(args)
       parse_arguments(args)
 #      Need to put in some code to deal with parsing errors
-      puts "just passed the parse"
-      # Create directory object
-      #Directory.new
       
       if @usernames[0] == "create"
         Directory.new.create(@quotasize, @usernames)

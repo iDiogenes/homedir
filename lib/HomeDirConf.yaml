@@ -6,7 +6,7 @@
   :from: sysadm@loni.ucla.edu
   :to: sysadm@loni.ucla.edu
 :user:
-  :username: root
+  :name: root
 :exitcodes:
   :success: 0
   :missing_arguments: 1
