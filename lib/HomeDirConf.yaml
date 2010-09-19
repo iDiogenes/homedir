@@ -4,7 +4,7 @@
   :email: smtp.loni.ucla.edu
 :notify:
   :from: sysadm@loni.ucla.edu
-  :to: sysadm@loni.ucla.edu
+  :to: jtrout@loni.ucla.edu
 :user:
   :name: root
 :exitcodes:

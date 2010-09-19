@@ -1,5 +1,6 @@
 TODO:
 
-Add email upon completion 
+Fix SSH connections so they open at start of the directory class not in each method
+Have email deal with all and individuals 
 Add verbose mode
 Add web version for bin

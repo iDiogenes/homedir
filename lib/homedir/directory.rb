@@ -1,7 +1,8 @@
 module HomeDir
   class Directory
-
+    
     def create(quotasize,usernames)
+      #email = Email.new
       ssh = Connection.new
       ssh = ssh.ssh_start
       usernames.delete("create")
@@ -34,11 +35,11 @@ module HomeDir
         $stderr.puts "Home Directory #{home} was not created" if hd_check.chomp != "exists"
           #raise RuntimeError.new("Home Directory #{home} was not created.")
       end
-      ssh.ssh_stop(ssh)
+      ssh = Connection.new.ssh_stop(ssh)
     end
 
     def modify(quotasize,usernames)
-      puts "About to open a connection"
+      email = Email.new
       ssh = Connection.new
       ssh = ssh.ssh_start
       usernames.delete("modify")
@@ -54,6 +55,8 @@ module HomeDir
           quota_thres =  quota_threshold(quotasize)
 
            ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
+           message = "All users now have a home directory quota size of #{quotasize} with an advisory threshold of #{quota_thres}."
+           email.email(message)
         end
       else
         usernames.uniq.each do |username|
@@ -66,11 +69,15 @@ module HomeDir
           quota_thres =  quota_threshold(quotasize)
 
           ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
+          message = "User #{username}'s home directory quota was changed to #{quotasize} with an advisory threshold of #{quota_thres}."
+          email.email(message, username)
         end
       end
      ssh = Connection.new.ssh_stop(ssh)
     end
 
+    private 
+    
     # Method for setting the isi quota threshold - curretly set to be 10% less than the quota size
     def quota_threshold(qs)
       storage = qs.slice(/[GMT]/)

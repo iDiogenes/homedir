@@ -6,7 +6,7 @@ module HomeDir
 
       #begin
        ssh = ssh_open 
-      #rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::Error => e
+      #rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::timeout(10) => e
         # Notify isser if Auth or timeout. use raise none of this should be in here.  Should have several tries.
         # FATAL ERROR
         #$stderr.puts 'Could not connect to server!'
