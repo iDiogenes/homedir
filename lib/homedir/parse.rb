@@ -1,7 +1,7 @@
 module HomeDir
   class Parse
 
-    def run(args)
+    def self.run(args)
       parse_arguments(args)
 #      Need to put in some code to deal with parsing errors
       
@@ -15,9 +15,9 @@ module HomeDir
       
     end
 
-    private
+    private_class_method
 
-    def parse_arguments(args)
+    def self.parse_arguments(args)
       opts = OptionParser.new do |opts|
         opts.banner = 'Usage: Place Holder'
         opts.separator ''
