@@ -1,13 +1,8 @@
 module HomeDir
   class Email
-    #attr_accessor :msg
-
-    #def initialize(msg)
-   #   @msg
-   # end
 
     	# Sends an email notifying a successful home directory creation
-    def email(comment, name)
+    def self.send(comment, name)
       date = Time.now
 
       message = <<-msg
@@ -38,7 +33,8 @@ module HomeDir
       msg
 
       #Email.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
-      Email.smtp_open.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
+      smtp = Email.smtp_open.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
+      #smtp.smtp_close(smtp)
     end
 
     private

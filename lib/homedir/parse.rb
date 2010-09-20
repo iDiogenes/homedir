@@ -4,18 +4,24 @@ module HomeDir
     def self.run(args)
       parse_arguments(args)
 #      Need to put in some code to deal with parsing errors
-      
+
+      # Open SSH & SMTP connections
+      #email = Email.new
+      ssh = Connection.new.ssh_start
+
       if @usernames[0] == "create"
-        Directory.new.create(@quotasize, @usernames)
+        Directory.new.create(@quotasize, @usernames, ssh)
       end
       
       if @usernames[0] == "modify"
-        Directory.new.modify(@quotasize, @usernames)
+        Directory.new.modify(@quotasize, @usernames, ssh)
       end
       
+      # Close SSH connection
+      ssh = Connection.new.ssh_stop(ssh)
     end
 
-    private_class_method
+    private
 
     def self.parse_arguments(args)
       opts = OptionParser.new do |opts|
