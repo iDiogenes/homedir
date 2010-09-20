@@ -1,11 +1,10 @@
 require 'rubygems'
+require 'bundler/setup'
 require 'etc'
 require 'net/ssh'
-require 'net/smtp'
+require 'mail'
 require 'optparse'
-require 'ostruct'
 require 'yaml'
-
 
 
 require File.expand_path(File.dirname(__FILE__) + '/homedir/connection')
@@ -16,7 +15,6 @@ require File.expand_path(File.dirname(__FILE__) + '/homedir/parse')
 module HomeDir
   # Config file should be sitting right next to this file
   CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), 'HomeDirConf.yaml'))
-  #CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), '/etc/HomeDirConf.yaml'))
 
   # Servers that this script will interact with
   SERVERS = CONFIG[:servers]

@@ -1,6 +1,8 @@
 TODO:
 
-Fix SSH connections so they open at start of the directory class not in each method
-Have email deal with all and individuals 
-Add verbose mode
+
+Have email deal with all and individuals
+Change Email class to use mail - http://github.com/mikel/mail
+Add verbose mode - $stdouts.puts "whatever" if $VERBOSE
+
 Add web version for bin
