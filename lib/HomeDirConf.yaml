@@ -1,10 +1,10 @@
 --- 
 :servers: 
-  :ssh: ifs.loni.ucla.edu
-  :email: smtp.loni.ucla.edu
+  :ssh: ifs.xxx
+  :email: smtp.xxx
 :notify:
-  :from: sysadm@loni.ucla.edu
-  :to: jtrout@loni.ucla.edu
+  :from: sysadm@xxx
+  :to: jtrout@xxx
 :user:
   :name: root
 :exitcodes:

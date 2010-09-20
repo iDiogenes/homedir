@@ -1,8 +1,8 @@
 module HomeDir
   class Directory
-    
+ 
     def create(quotasize,usernames)
-      #email = Email.new
+      email = Email.new
       ssh = Connection.new
       ssh = ssh.ssh_start
       usernames.delete("create")
