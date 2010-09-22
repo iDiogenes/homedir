@@ -27,4 +27,7 @@ module HomeDir
 
   # Exit codes which this script will be using
   EXITCODES = CONFIG[:exitcodes]
+  
+  # Set global variable for verbose
+  $VERBOSE = nil
 end

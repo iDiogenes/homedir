@@ -7,6 +7,7 @@ module HomeDir
 
       # Open SSH & SMTP connections
       #email = Email.new
+      $stdout.puts "Openig new SSH connection" if $VERBOSE
       ssh = Connection.new.ssh_start
 
       if @usernames[0] == "create"
@@ -17,6 +18,7 @@ module HomeDir
         Directory.new.modify(@quotasize, @usernames, ssh)
       end
       
+      $stdout.puts "Closing SSH connection" if $VERBOSE
       # Close SSH connection
       ssh = Connection.new.ssh_stop(ssh)
     end
@@ -71,6 +73,13 @@ module HomeDir
 
           @quotasize = qs
         }
+        
+        opts.on('-v', '--verbose', 'Verbose mode') {
+
+          $VERBOSE = true
+          
+        }
+        
 
         opts.on('-h', '--help', 'Show this message') do
           puts opts

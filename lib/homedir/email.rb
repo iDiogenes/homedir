@@ -1,14 +1,13 @@
 module HomeDir
   class Email
+    
 
     	# Sends an email notifying a successful home directory creation
     def self.send(comment, name)
       date = Time.now
 
       message = <<-msg
-  From: LONI Systems Administration <sysadm@loni.ucla.edu>
-  To: LONI Systems Administration <jtrout@loni.ucla.edu>
-  Subject: [loni-sys] Home directory info for <#{name}>.
+    Subject: [loni-sys] Home directory info for #{name}.
   
       #{date}:
       
@@ -33,7 +32,7 @@ module HomeDir
       msg
 
       #Email.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
-      smtp = Email.smtp_open.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
+      smtp = Email.smtp_open.send_message message, 'jtrout@loni.ucla.edu', 'jtrout@loni.ucla.edu'
       #smtp.smtp_close(smtp)
     end
 
