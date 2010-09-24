@@ -28,7 +28,9 @@ module HomeDir
     # Closes an SSH connection if open
     def ssh_close(ssh)
       ssh.close
-      puts "SSH Connection closed" if ssh.closed? 
+      if ssh.closed?
+        $stdout.puts "SSH session closed" if $VERBOSE
+      end    
       ssh = nil
     end
   end
