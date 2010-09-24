@@ -5,36 +5,31 @@ module HomeDir
     def self.send(comment, name)
       date = Time.now
 
-      message = <<-msg
-  From: LONI Systems Administration <sysadm@loni.ucla.edu>
-  To: LONI Systems Administration <jtrout@loni.ucla.edu>
-  Subject: [loni-sys] Home directory info for <#{name}>.
-  
-      #{date}:
-      
-      Home directory info for #{name} is available, please see Additional Information.
+      #message = <<MSG_END
+      message = <<MESSAGE
+From: LONI Systems Administration <sysadm@loni.ucla.edu>
+To: JD Trout <jtrout@loni.ucla.edu>
+Subject: [loni-sys] Home directory info for <#{name}>
+
+#{date}:
+
+Home directory info for #{name} is available, please see Additional Information.
+
+
+Additional Information:
+#{comment}
+
+This script was started by #{Etc.getlogin}
+
+Cheers,
+LONI Administration
+MESSAGE
+
      
-      msg
-
-      if comment
-        message << <<-msg
-
-      Additional Information:
-      #{comment}
-        msg
-      end
-
-      message << <<-msg
-
-      This script was started by #{Etc.getlogin}
-
-      Cheers, 
-      LONI Administration
-      msg
 
       #Email.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
       smtp = Email.smtp_open.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
-      #smtp.smtp_close(smtp)
+      smtp = smtp.smtp_close(smtp)
     end
 
     private
