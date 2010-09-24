@@ -28,8 +28,10 @@ MESSAGE
      
 
       #Email.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
-      smtp = Email.smtp_open.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
-      smtp = smtp.smtp_close(smtp)
+      smtp = Email.smtp_open
+      smtp.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
+      #smtp.finish
+      smtp = Email.smtp_close(smtp)
     end
 
     private
@@ -39,7 +41,7 @@ MESSAGE
     end
 
     def self.smtp_close(smtp)
-      smtp.close if smtp
+      smtp.finish if smtp
       smtp = nil
     end
 
