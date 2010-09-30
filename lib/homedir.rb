@@ -2,7 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'etc'
 require 'net/ssh'
-require 'mail'
+require 'net/smtp'
 require 'optparse'
 require 'yaml'
 
