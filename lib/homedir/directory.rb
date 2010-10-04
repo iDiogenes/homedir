@@ -76,12 +76,14 @@ module HomeDir
           
           $stdout.puts "Modifying quota for #{username} to be #{quotasize}" if $VERBOSE
           ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
+          
 
+          # need to add some code to make 4G =  4.0G for checking
           qs_check = ssh.exec!("isi quota ls --path=#{home} | grep -c #{quotasize}")
           if qs_check.to_i == 1
             $stdout.puts "Quota change was successful"
           else
-            $stdout.puts "Quota change was unsuccessful"
+            $stdout.puts "Quota change was unsuccessful" 
           end
 
           
