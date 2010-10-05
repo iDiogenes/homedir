@@ -6,11 +6,8 @@ module HomeDir
 
       begin
        ssh = ssh_open 
-      rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::timeout(10) => e
-        # Notify isser if Auth or timeout. use raise none of this should be in here.  Should have several tries.
-        # FATAL ERROR
-        $stderr.puts 'Could not connect to server!'
-        #exit HomeDir::EXITCODES[:server_failure]
+      rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::timeout(10) 
+        $stderr.puts 'Could not connect to server!\n\n'
       end
     end
 
@@ -29,7 +26,7 @@ module HomeDir
     def ssh_close(ssh)
       ssh.close
       if ssh.closed?
-        $stdout.puts "SSH session closed" if $VERBOSE
+        $stdout.puts "SSH connection closed\n\n" if $VERBOSE
       end    
       ssh = nil
     end

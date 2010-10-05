@@ -24,13 +24,9 @@ This script was started by #{Etc.getlogin}
 Cheers,
 LONI Administration
 MESSAGE
-
-     
-
-      #Email.smtp_open.send_message message, NOTIFY[:from], NOTIFY[:to]
+   
       smtp = Email.smtp_open
-      smtp.send_message message, NOTIFY[:from], "jtrout@loni.ucla.edu"
-      #smtp.finish
+      smtp.send_message message, NOTIFY[:from], NOTIFY[:to]
       smtp = Email.smtp_close(smtp)
     end
 

@@ -7,6 +7,7 @@
   :to: jtrout@loni.ucla.edu
 :user:
   :name: root
+  :exclude: jtrout dhasson jpierce
 :exitcodes:
   :success: 0
   :missing_arguments: 1

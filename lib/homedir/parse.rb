@@ -6,8 +6,7 @@ module HomeDir
 #      Need to put in some code to deal with parsing errors
 
       # Open SSH & SMTP connections
-      #email = Email.new
-      $stdout.puts "Openig new SSH connection" if $VERBOSE
+      $stdout.puts "\nOpenig new SSH connection\n\n" if $VERBOSE
       ssh = Connection.new.ssh_start
 
       if @usernames[0] == "create"
@@ -17,17 +16,17 @@ module HomeDir
       if @usernames[0] == "modify"
         Directory.new.modify(@quotasize, @usernames, ssh)
       end
-      
-      $stdout.puts "Closing SSH connection" if $VERBOSE
+
       # Close SSH connection
-      ssh = Connection.new.ssh_stop(ssh)
+      $stdout.puts "Closing SSH connection\n\n" if $VERBOSE
+      Connection.new.ssh_stop(ssh)
     end
 
     private
 
     def self.parse_arguments(args)
       opts = OptionParser.new do |opts|
-        opts.banner = 'Usage: Place Holder'
+        opts.banner = 'Usage: Isilon directory manipulator'
         opts.separator ''
         opts.separator 'homedir is free software created at the Laboratory of Neuro Imaging (LONI)'
         opts.separator 'for the sole purpose of manipulating directories on an Isilon System'
@@ -36,7 +35,7 @@ module HomeDir
         opts.on('-c', '--create', 'Create home directory') {
 
           if ARGV[0] == nil
-            $stderr.puts 'No usernames specified!' #This should not be handled here
+            $stderr.puts 'No usernames specified!' 
           end
 
           @usernames = ["create"]
@@ -52,7 +51,7 @@ module HomeDir
         opts.on('-m', '--modify', 'Modify home directory quota') {
 
           if ARGV[0] == nil
-            $stderr.puts 'No usernames specified!' #This should not be handled here
+            $stderr.puts 'No usernames specified!' 
           end
 
           @usernames = ["modify"]
@@ -68,8 +67,13 @@ module HomeDir
         opts.on('-s', '--size', 'Set directory quota size') {
           qs = ARGV[0]
           unless qs =~ (/^(\d*\.?\d)[GTM]$/) #Make sure the formatting is correct
-            $stderr.puts "Incorrect size value" # Need to put in a proper exit code
+            $stderr.puts "Incorrect size value\n\n" # Need to put in a proper exit code
           end
+
+          # Convert size into float.  This is necessary because of quota checking in directory class
+          size = qs.slice(/[GMT]/)
+          qs = sprintf('%0.1f',(qs.to_f)) # Isilon can only compute float to the thenth's place
+          qs = qs << size
 
           @quotasize = qs
         }
