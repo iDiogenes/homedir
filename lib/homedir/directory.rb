@@ -38,12 +38,14 @@ module HomeDir
         $stdout.puts "Checking to see if a homedirectory for #{username} was created \n\n" if $VERBOSE
         if ssh.exec!("test -d #{home} && echo exists") == "exists\n"
           $stdout.puts "Home Directory #{home} was successfully created\n\n"
+        else
+          raise StandardError.new("Home Directory for #{home} was NOT successful created\n\n")
 			  end
 
         # quota checking
         quota_check(home, quotasize, ssh)
 
-        # email what changed
+        # email the info on the created user
         message = "User #{username}'s home directory was created with a quotasize of #{quotasize} and an advisory threshold of #{quota_thres}."
         Email.send(message, username)
       end
@@ -57,14 +59,11 @@ module HomeDir
         passwd.each do |passwd|
           passwd = passwd.split(':')
 
+          # pull out the home directory and username
           home = "/ifs/home/#{passwd[0]}"
+          username = passwd[0]
 
-          # set the quota threshold 
-          quota_thres =  quota_threshold(quotasize)
-          $stdout.puts "Advisory threshold is #{quota_thres}\n\n" if $VERBOSE
-
-           $stdout.puts "Modifying quota for #{username} to be #{quotasize}\n\n" if $VERBOSE
-           ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
+          modify_quota(username, home, quotasize, ssh)
 
           # email what changed
            message = "All users now have a home directory quota size of #{quotasize} with an advisory threshold of #{quota_thres}."
@@ -74,18 +73,11 @@ module HomeDir
         usernames.uniq.each do |username|
         passwd = ssh.exec!("/usr/bin/ypcat passwd | grep '^#{username}:'").split(':')
 
-          # pull out the home directory
+          # pull out the home directory and username
           home = "/ifs/home/#{passwd[0]}"
+          username = passwd[0]
 
-          # set the quota threshold
-          quota_thres =  quota_threshold(quotasize)
-          $stdout.puts "Advisory threshold is #{quota_thres}\n\n" if $VERBOSE
-          
-          $stdout.puts "Modifying quota for #{username} to be #{quotasize}\n\n" if $VERBOSE
-          ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
-
-           # quota checking
-           quota_check(home, quotasize, ssh)
+          modify_quota(username, home, quotasize, ssh)
 
           # email what changed
           message = "User #{username}'s home directory quota was changed to #{quotasize} with an advisory threshold of #{quota_thres}."
@@ -110,8 +102,21 @@ module HomeDir
       if qs_check.to_i == 1
         $stdout.puts "Quota check was successful\n\n"
       else
-        $stdout.puts "Quota chech was NOT successful\n\n"
+        raise StandardError.new("Quota check was NOT successful\n\n")
       end
     end
+
+    def modify_quota(username, home, quotasize, ssh)
+      # set the quota threshold
+      quota_thres =  quota_threshold(quotasize)
+      $stdout.puts "Advisory threshold is #{quota_thres}\n\n" if $VERBOSE
+
+      $stdout.puts "Modifying quota for #{username} to be #{quotasize}\n\n" if $VERBOSE
+      ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
+
+      # quota checking
+      quota_check(home, quotasize, ssh)
+    end
+
   end
 end
