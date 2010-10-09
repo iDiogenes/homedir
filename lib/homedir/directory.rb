@@ -111,7 +111,7 @@ module HomeDir
       $stdout.puts "Performing quota check\n\n" if $VERBOSE
       qs_check = ssh.exec!("isi quota ls --path=#{home} | grep -c #{quotasize}")
       if qs_check.to_i == 1
-        $stdout.puts "Quota check was successful\n\n"
+        $stdout.puts "Quota check was successful\n\n" if $VERBOSE
       else
         raise StandardError.new("Quota check was NOT successful\n\n")
       end
