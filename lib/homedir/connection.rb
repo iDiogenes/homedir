@@ -5,7 +5,8 @@ module HomeDir
     def ssh_start
 
       begin
-       ssh = ssh_open 
+       passwd = ask("Enter your password: ") { |q| q.echo = "*" }
+       ssh = ssh_open(passwd)
       rescue SocketError, Net::SSH::AuthenticationFailed, Timeout::timeout(10) 
         $stderr.puts 'Could not connect to server!\n\n'
       end
@@ -18,8 +19,8 @@ module HomeDir
     private
     
     	# Opens an SSH connection if needed
-    def ssh_open
-      Net::SSH.start(SERVERS[:ssh], USER[:name])
+    def ssh_open(passwd)
+      Net::SSH.start(SERVERS[:ssh], USER[:name], :password => passwd)
     end
 
     # Closes an SSH connection if open
