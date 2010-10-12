@@ -7,9 +7,9 @@ module HomeDir
  
         # search for user in NIS
         passwd = ssh.exec!("/usr/bin/ypcat passwd | grep '^#{username}:'").split(':')
-
+        
         raise IndexError.new("Could not find user #{username}.") if passwd[0] != username
-
+        
         # pull out the group & home directory
         group = passwd[3]
         home = "/ifs/home/#{passwd[0]}"

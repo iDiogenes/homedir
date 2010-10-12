@@ -69,7 +69,8 @@ module HomeDir
 
         opts.on('-s', '--size', 'Set directory quota size') {
           qs = ARGV[0]
-          unless qs =~ (/^(\d*\.[0-9]+\d)[GTM]$/) #Make sure the formatting is correct
+          
+          unless qs =~ (/^(\d+\.?\d*)[GTM]$/) #Make sure the formatting is correct
             $stderr.puts "\nIncorrect size value, please use: M,G,T\n\n" # Need to put in a proper exit code
             exit
           end
