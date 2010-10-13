@@ -37,6 +37,7 @@ module HomeDir
         opts.separator 'homedir is free software created at the Laboratory of Neuro Imaging (LONI)'
         opts.separator 'for the sole purpose of manipulating directories on an Isilon System'
         opts.separator ''
+        opts.separator 'Examples: ./homedir-cmd -m all -s 3.5G or ./homedir-cmd -c bobjones -s 4G'
 
         opts.on('-c', '--create', 'Create home directory') {
 
@@ -52,7 +53,7 @@ module HomeDir
 
         opts.on('-m', '--modify', 'Modify home directory quota') {
           
-# This currently does not work because it take the next flag as its input
+# This currently does not work because it take the next flag as its input need to figure something out
 #          if args[0] == nil
 #            $stderr.puts 'No usernames specified!'
 #          end

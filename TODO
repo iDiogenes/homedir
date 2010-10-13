@@ -1,8 +1,0 @@
-TODO:
-
-
-Have email deal with all and individuals
-Change Email class to use mail - http://github.com/mikel/mail
-Add verbose mode - $stdouts.puts "whatever" if $VERBOSE
-
-Add web version for bin

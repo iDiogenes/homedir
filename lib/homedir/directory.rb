@@ -55,21 +55,42 @@ module HomeDir
         passwd.each do |passwd|
           passwd = passwd.split(':')
 
+          # Create exclude user list
+          exclude = USER[:exclude].split(' ')
+
           # pull out the home directory and username
           home = "/ifs/home/#{passwd[0]}"
           username = passwd[0]
+          ifshome = passwd[5]
 
-          # modify the users quota
-          modify_quota(username, home, quotasize, ssh)
 
-          # create quota if user does not already have one
+          # add to exclude list if user does not have a home directory
+          exclude = exclude << username if ssh.exec!("test -d #{home} && echo exists") != "exists\n"
+
+          # removing all non /ifshome users
+          exclude = exclude << username unless ifshome == "/ifshome/#{username}"
+
+          # check to see if quota exists
           q_exists = quota_exists(username, ssh)
-          create_quota(home, quotasize, ssh) if q_exists != true
 
-          # email what changed
-          message = "All users now have a home directory quota size of #{quotasize}."
-          Email.send(message, "All LONI Users")
+          if q_exists == true
+            modify_quota(username, home, quotasize, ssh) unless exclude.include?(username)
+          else
+            create_quota(home, quotasize, ssh) unless exclude.include?(username)
+          end
+          
+
+          # create quota if user does not already have one, unless they are part of the exclude users list
+#          q_exists = quota_exists(username, ssh)
+#          if q_exists != true
+#            create_quota(home, quotasize, ssh) unless exclude.include?(username)
+#          end
+
+
         end
+        # email what changed
+        message = "All users now have a home directory quota size of #{quotasize}."
+        Email.send(message, "All LONI Users")
       else
         usernames.uniq.each do |username|
         passwd = ssh.exec!("/usr/bin/ypcat passwd | grep '^#{username}:'").split(':')
@@ -85,7 +106,7 @@ module HomeDir
             $stdout.puts "Setting #{username} to be #{quotasize}\n\n" if $VERBOSE
             modify_quota(username, home, quotasize, ssh)
           else
-            $stdout.puts "#{username} does not have a quota, creating a quota to be #{quotasize}\n\n" if $VERBOSE
+            $stdout.puts "#{username} does not have a quota\n\n" if $VERBOSE
             create_quota(home, quotasize, ssh)
           end
 
@@ -108,12 +129,12 @@ module HomeDir
 
     # Check if quota was created
     def quota_check(home, quotasize, ssh)
-      $stdout.puts "Performing quota check\n\n" if $VERBOSE
+      $stdout.puts "Performing quota check on #{home}\n\n" if $VERBOSE
       qs_check = ssh.exec!("isi quota ls --path=#{home} | grep -c #{quotasize}")
       if qs_check.to_i == 1
         $stdout.puts "Quota check was successful\n\n" if $VERBOSE
       else
-        raise StandardError.new("Quota check was NOT successful\n\n")
+        raise StandardError.new("Quota check failed for #{home}\n\n")
       end
     end
 
@@ -121,7 +142,7 @@ module HomeDir
     def modify_quota(username, home, quotasize, ssh)
       # set the quota threshold
       quota_thres =  quota_threshold(quotasize)
-      $stdout.puts "Advisory threshold is #{quota_thres}\n\n" if $VERBOSE
+      $stdout.puts "Advisory threshold is #{quota_thres} for #{username}\n\n" if $VERBOSE
 
       $stdout.puts "Modifying quota for #{username} to be #{quotasize}\n\n" if $VERBOSE
       ssh.exec!("isi quota modify --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
@@ -134,6 +155,7 @@ module HomeDir
     def create_quota(home, quotasize, ssh)
       # set the quota threshold
       quota_thres =  quota_threshold(quotasize)
+      $stdout.puts "Creating quota for #{username} to be #{quotasize}\n\n" if $VERBOSE
       ssh.exec!("isi quota create --directory --path=#{home} --hard-threshold=#{quotasize} --advisory-threshold=#{quota_thres}")
 
       # was the quota created?
