@@ -4,10 +4,10 @@
   :email: smtp.loni.ucla.edu
 :notify:
   :from: sysadm@loni.ucla.edu
-  :to: jtrout@loni.ucla.edu
+  :to: sysadm@loni.ucla.edu
 :user:
   :name: root
-  :exclude: jtrout dhasson jpierce
+  :exclude: dhasson jpierce thompson narr shattuck
 :exitcodes:
   :success: 0
   :missing_arguments: 1
@@ -15,3 +15,4 @@
   :invalid_username: 4
   :directory_exists: 8
   :creation_error: 16
+

@@ -1,9 +1,10 @@
 require 'rubygems'
-require 'bundler/setup'
+#require 'bundler/setup'
 require 'etc'
 require 'net/ssh'
 require 'net/smtp'
 require 'optparse'
+require 'highline/import'
 require 'yaml'
 
 

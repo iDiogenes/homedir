@@ -25,18 +25,21 @@ module HomeDir
     private
 
     def self.parse_arguments(args)
+
+      if args[0] == nil
+        $stderr.puts "\nPlease run -h or --help for more information\n\n"
+        exit
+      end
+
       opts = OptionParser.new do |opts|
-        opts.banner = 'Usage: Isilon directory manipulator'
+        opts.banner = 'Isilon directory manipulator'
         opts.separator ''
         opts.separator 'homedir is free software created at the Laboratory of Neuro Imaging (LONI)'
         opts.separator 'for the sole purpose of manipulating directories on an Isilon System'
         opts.separator ''
+        opts.separator 'Examples: ./homedir-cmd -m all -s 3.5G or ./homedir-cmd -c bobjones -s 4G'
 
         opts.on('-c', '--create', 'Create home directory') {
-
-          if ARGV[0] == nil
-            $stderr.puts 'No usernames specified!' 
-          end
 
           @usernames = ["create"]
 
@@ -49,10 +52,11 @@ module HomeDir
         }
 
         opts.on('-m', '--modify', 'Modify home directory quota') {
-
-          if ARGV[0] == nil
-            $stderr.puts 'No usernames specified!' 
-          end
+          
+# This currently does not work because it take the next flag as its input need to figure something out
+#          if args[0] == nil
+#            $stderr.puts 'No usernames specified!'
+#          end
 
           @usernames = ["modify"]
 
@@ -66,8 +70,10 @@ module HomeDir
 
         opts.on('-s', '--size', 'Set directory quota size') {
           qs = ARGV[0]
-          unless qs =~ (/^(\d*\.?\d)[GTM]$/) #Make sure the formatting is correct
-            $stderr.puts "Incorrect size value\n\n" # Need to put in a proper exit code
+          
+          unless qs =~ (/^(\d+\.?\d*)[GTM]$/) #Make sure the formatting is correct
+            $stderr.puts "\nIncorrect size value, please use: M,G,T\n\n" # Need to put in a proper exit code
+            exit
           end
 
           # Convert size into float.  This is necessary because of quota checking in directory class
