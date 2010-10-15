@@ -38,6 +38,7 @@ module HomeDir
         opts.separator 'for the sole purpose of manipulating directories on an Isilon System'
         opts.separator ''
         opts.separator 'Examples: ./homedir-cmd -m all -s 3.5G or ./homedir-cmd -c bobjones -s 4G'
+        opts.separator ''
 
         opts.on('-c', '--create', 'Create home directory') {
 
@@ -53,11 +54,6 @@ module HomeDir
 
         opts.on('-m', '--modify', 'Modify home directory quota') {
           
-# This currently does not work because it take the next flag as its input need to figure something out
-#          if args[0] == nil
-#            $stderr.puts 'No usernames specified!'
-#          end
-
           @usernames = ["modify"]
 
           ARGV.uniq.each do |username|
@@ -78,7 +74,11 @@ module HomeDir
 
           # Convert size into float.  This is necessary because of quota checking in directory class
           size = qs.slice(/[GMT]/)
-          qs = sprintf('%0.1f',(qs.to_f)) # Isilon can only compute float to the thenth's place
+          if qs.size > 4
+            qs = sprintf('%0.0f',(qs.to_f)) # Isilon rounds after three digits
+          else
+            qs = sprintf('%0.1f',(qs.to_f)) # Isilon can only compute float to the thenth's place
+          end
           qs = qs << size
 
           @quotasize = qs

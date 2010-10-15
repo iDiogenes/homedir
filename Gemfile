@@ -1,6 +1,7 @@
 source "http://rubygems.org"
-gem 'mail'
-gem 'etc'
+gem 'net/smtp'
 gem 'net-ssh'
 gem 'OptionParser'
-gem 'i18n'
+gem 'highline/import'
+gem 'yaml'
+

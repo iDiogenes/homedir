@@ -78,15 +78,6 @@ module HomeDir
           else
             create_quota(home, quotasize, ssh) unless exclude.include?(username)
           end
-          
-
-          # create quota if user does not already have one, unless they are part of the exclude users list
-#          q_exists = quota_exists(username, ssh)
-#          if q_exists != true
-#            create_quota(home, quotasize, ssh) unless exclude.include?(username)
-#          end
-
-
         end
         # email what changed
         message = "All users now have a home directory quota size of #{quotasize}."
@@ -131,8 +122,6 @@ module HomeDir
     def quota_check(home, quotasize, ssh)
       $stdout.puts "Performing quota check on #{home}\n\n" if $VERBOSE      
       qs_check = ssh.exec!("isi quota ls --path=#{home} | awk '{ print $4 }' | grep -c ^#{quotasize}")
-      #qs_check = ssh.exec!("isi quota ls --path=#{home} | awk '{ print $4 }'")
-      puts qs_check
       if qs_check.to_i == 1
         $stdout.puts "Quota check was successful\n\n" if $VERBOSE
       else

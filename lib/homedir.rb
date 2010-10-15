@@ -1,6 +1,4 @@
 require 'rubygems'
-#require 'bundler/setup'
-require 'etc'
 require 'net/ssh'
 require 'net/smtp'
 require 'optparse'
