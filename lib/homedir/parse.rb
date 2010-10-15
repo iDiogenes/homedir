@@ -68,18 +68,18 @@ module HomeDir
           qs = ARGV[0]
           
           unless qs =~ (/^(\d+\.?\d*)[GTM]$/) #Make sure the formatting is correct
-            $stderr.puts "\nIncorrect size value, please use: M,G,T\n\n" # Need to put in a proper exit code
+            $stderr.puts "\nIncorrect size value, please use: M,G,T\n\n" 
             exit
           end
 
           # Convert size into float.  This is necessary because of quota checking in directory class
           size = qs.slice(/[GMT]/)
-          if qs.size > 4
-            qs = sprintf('%0.0f',(qs.to_f)) # Isilon rounds after three digits
-          else
-            qs = sprintf('%0.1f',(qs.to_f)) # Isilon can only compute float to the thenth's place
+          qs = sprintf('%0.1f',(qs.to_f)).to_f # Isilon can only compute float to the thenth's place
+          if qs > 9
+            qs = sprintf('%0.0f',(qs.to_f)).to_i  # Isilon rounds after 9
           end
-          qs = qs << size
+
+          qs = qs.to_s << size # convert to string and append size
 
           @quotasize = qs
         }
