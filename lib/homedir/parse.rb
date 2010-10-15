@@ -78,7 +78,11 @@ module HomeDir
 
           # Convert size into float.  This is necessary because of quota checking in directory class
           size = qs.slice(/[GMT]/)
-          qs = sprintf('%0.1f',(qs.to_f)) # Isilon can only compute float to the thenth's place
+          if qs.size > 4
+            qs = sprintf('%0.0f',(qs.to_f)) # Isilon rounds after three digits
+          else
+            qs = sprintf('%0.1f',(qs.to_f)) # Isilon can only compute float to the thenth's place
+          end
           qs = qs << size
 
           @quotasize = qs
