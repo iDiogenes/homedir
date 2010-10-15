@@ -54,11 +54,6 @@ module HomeDir
 
         opts.on('-m', '--modify', 'Modify home directory quota') {
           
-# This currently does not work because it take the next flag as its input need to figure something out
-#          if args[0] == nil
-#            $stderr.puts 'No usernames specified!'
-#          end
-
           @usernames = ["modify"]
 
           ARGV.uniq.each do |username|
