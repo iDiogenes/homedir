@@ -38,6 +38,7 @@ module HomeDir
         opts.separator 'for the sole purpose of manipulating directories on an Isilon System'
         opts.separator ''
         opts.separator 'Examples: ./homedir-cmd -m all -s 3.5G or ./homedir-cmd -c bobjones -s 4G'
+        opts.separator ''
 
         opts.on('-c', '--create', 'Create home directory') {
 
