@@ -129,8 +129,10 @@ module HomeDir
 
     # Check if quota was created
     def quota_check(home, quotasize, ssh)
-      $stdout.puts "Performing quota check on #{home}\n\n" if $VERBOSE
-      qs_check = ssh.exec!("isi quota ls --path=#{home} | grep -c #{quotasize}")
+      $stdout.puts "Performing quota check on #{home}\n\n" if $VERBOSE      
+      qs_check = ssh.exec!("isi quota ls --path=#{home} | awk '{ print $4 }' | grep -c ^#{quotasize}")
+      #qs_check = ssh.exec!("isi quota ls --path=#{home} | awk '{ print $4 }'")
+      puts qs_check
       if qs_check.to_i == 1
         $stdout.puts "Quota check was successful\n\n" if $VERBOSE
       else

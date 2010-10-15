@@ -8,7 +8,7 @@ module HomeDir
 
       message = <<MESSAGE
 From: LONI Systems Administration <sysadm@loni.ucla.edu>
-To:  LONI Systems Administration <sysadm@loni.ucla.edu>
+To:  LONI Systems Administration <jtrout@loni.ucla.edu>
 Subject: [loni-sys] Home directory info for <#{name}>
 
 #{date}:
