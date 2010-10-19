@@ -1,0 +1,21 @@
+= homedir
+
+homedir is a Ruby script for creating and modifying home directories on LONI's Isilon Cluster
+
+== Usage
+
+To create a new home directory run the following from homedir/bin:
+
+  ./homedir-cmd -c bobjones -s 4G
+
+To modify the quota of an existing home directory run the following from homedir/bin
+
+  ./homedir-cmd -m bobjones -s 10.5G
+
+For a full list of options run the following from homedir/bin
+
+  ./homedir-cmd -h
+
+== Copyright
+
+Copyright (c) 2010 Laboratory of Neuro Imaging, UCLA
