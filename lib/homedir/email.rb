@@ -7,8 +7,8 @@ module HomeDir
       date = Time.now
 
       message = <<MESSAGE
-From: LONI Systems Administration <sysadm@loni.ucla.edu>
-To:  LONI Systems Administration <sysadm@loni.ucla.edu>
+From: LONI Systems Administration <sysadm@xxx.xxx>
+To:  LONI Systems Administration <sysadm@xxx.xxx>
 Subject: [loni-sys] Home directory info for <#{name}>
 
 #{date}:
